@@ -1,0 +1,192 @@
+## DFS
+
+> 깊이 우선 탐색(그래프 탐색 알고리즘)
+
+시작한 노드부터 인접한 노드를 재귀적으로 방문하여 가장 멀리 있는 노드까지 탐색하는 알고리즘
+> 
+
+<aside>
+
+**분기점**
+
+자식이 2개인 노드
+
+</aside>
+
+### sudo code
+
+```java
+DFS(u, adj)
+    u.visited = true
+    for each v ∈ adj[u]
+        if v.visited == false
+            DFS(v, adj)
+```
+
+- `u.visited = true` : 방문을 체크
+- `for each v ∈ adj[u]` : 방문한 노드와 연결된 간선을 순회하여 검사
+    - `if v.visited == false` : 만약 방문하지 않았다면
+        - `DFS(v, adj)` : 그 밑에부터 다시 BFS
+
+![image.png](DFS%20&%20BFS/image.png)
+
+### 코드
+
+```java
+#include <stdio.h>
+
+int map[1001][1001], dfs[1001];
+
+void init(int *, int size);
+
+void DFS(int v, int N) {
+
+	dfs[v] = 1;
+	printf("%d ", v);
+
+	for (int i = 1; i <= N; i++) {
+		if (map[v][i] == 1 && dfs[i] == 0) {
+			DFS(i, N);
+		}
+	}
+
+}
+
+int main(void) {
+
+	init(map, sizeof(map) / 4);
+	init(dfs, sizeof(dfs) / 4);
+
+	int N, M, V;
+	scanf("%d%d%d", &N, &M, &V);
+
+	for (int i = 0; i < M; i++)
+	{
+		int start, end;
+		scanf("%d%d", &start, &end);
+		map[start][end] = 1;
+		map[end][start] = 1;
+	}
+
+	DFS(V, N);
+
+	return 0;
+}
+
+void init(int *arr, int size) {
+	for (int i = 0; i < size; i++)
+	{
+		arr[i] = 0;
+	}
+}
+```
+
+## BFS
+
+> 너비 우선 탐색(그래프 탐색 알고리즘)
+
+어떤 정점에서 시작하여 다음 깊이의 정점으로 이동하기 전에 현재 깊이의 모든 정점을 탐색하여 방문한 장점은 다시 방문X
+> 
+
+같은 가중치를 가진 그래프에서 최단거리 알고리즘으로 쓰임
+
+⇒ Queue를 통해 구현 가능
+
+### Sudo code
+
+```java
+BFS(G, u)
+    u.visited = 1
+    q.push(u);
+    
+    while (q.size())
+        u = q.front()
+        q.pop()
+        for each v ∈ G.Adj[u]
+            if v.visited == false
+                v.visited = u.visited + 1
+                q.push(v)
+```
+
+- `BFS(G, u)` : G=Graph, u=정점(from)
+- `u.visited = 1` : 방문을 체크
+- `q.push(u)` : 방문한 노드를 큐에 푸쉬
+- `while (q.size())` : 큐의 사이즈만큼 순회
+    - `u = q.front()` : 시작점을 지정
+    - `q.pop()` : 큐를 팝
+    - `for each v ∈ G.Adj[u]` : 시작점 자식들 순회
+        - `if v.visited == false` : 만약 방문X이면
+            - `v.visited = u.visited + 1` : 간선의 가중치를 넣어준 뒤
+            - `q.push(v)` : 큐에 push
+
+<aside>
+❗
+
+간선의 가중치가 같은 그래프에만 사용할 수 있음!!
+
+</aside>
+
+![image.png](DFS%20&%20BFS/image%201.png)
+
+### 코드
+
+```java
+#include <stdio.h>
+
+int map[1001][1001], bfs[1001];
+int queue[1001];
+
+void init(int *, int size);
+
+void BFS(int v, int N) {
+	int front = 0, rear = 0;
+	int pop;
+
+	printf("%d ", v);
+	queue[rear++] = v;
+	bfs[v] = 1;
+
+	while (front < rear) {
+		pop = queue[front++];
+
+		for (int i = 1; i <= N; i++) {
+			if (map[pop][i] == 1 && bfs[i] == 0) {
+				printf("%d ", i);
+				queue[rear++] = i;
+				bfs[i] = 1;
+			}
+		}
+	}
+
+	return;
+}
+
+int main(void) {
+
+	init(map, sizeof(map) / 4);
+	init(bfs, sizeof(bfs) / 4);
+	init(queue, sizeof(queue) / 4);
+
+	int N, M, V;
+	scanf("%d%d%d", &N, &M, &V);
+
+	for (int i = 0; i < M; i++)
+	{
+		int start, end;
+		scanf("%d%d", &start, &end);
+		map[start][end] = 1;
+		map[end][start] = 1;
+	}
+
+	BFS(V, N);
+
+	return 0;
+}
+
+void init(int *arr, int size) {
+	for (int i = 0; i < size; i++)
+	{
+		arr[i] = 0;
+	}
+}
+```
